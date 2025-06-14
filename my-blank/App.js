@@ -3,34 +3,21 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 
-const Texto = () => {
+const Texto = ({style}) => {
   const [contenido, setContenido] = useState('Hola Mundo RNative');
   const actualizaTexto = () => {
     setContenido('Estado actualizado del text');
   };
-  return <Text onPress={actualizaTexto}>{contenido}</Text>;
-};
-
-const Titulo = () => {
-  const [textoBoton, setTextoBoton] = useState('Trabaja');
-  const cambiarTextoBoton = () => {
-    setTextoBoton('¡Texto del botón actualizado!');
-  };
-  return (
-    <View style={{ alignItems: 'center', marginBottom: 20 }}>
-      <Button title={textoBoton} onPress={cambiarTextoBoton} />
-    </View>
-  );
+  return <Text style={[styles.text,style]} onPress={actualizaTexto}>{contenido}</Text>;
 };
 
 /* Zona 2 : Main */
 export default function App() {
   return (
     <View style={styles.container}>
-      <Texto />
-      <Titulo />
-      <Texto />
-      <Texto />
+      <Texto style={styles.red} />
+      <Texto style={styles.green} />
+      <Texto style={styles.yellow} />
       <StatusBar style="auto" />
     </View>
   );
@@ -40,8 +27,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: '#87CEEB',
+    alignItems: 'baseline',
     justifyContent: 'center',
+    flexDirection:'row'
   },
+  text:{
+    color:'black',
+    fontSize:27,
+  },
+  red:{backgroundColor:'red'},
+  green:{backgroundColor:'green'},
+  yellow:{backgroundColor:'yellow'},
 });
