@@ -1,40 +1,53 @@
+/* Zona 1 : Importaciones */
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { ImageBackground } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
-// 1. Configuramos el SplashScreen
+// Prevenir que se oculte automáticamente el splash screen
 SplashScreen.preventAutoHideAsync();
 
+// Componente Texto
+const Texto = () => {
+  const [contenido, setContenido] = useState('Hola Mundo RNative');
+  const actualizaTexto = () => {
+    setContenido('Estado actualizado del text');
+  };
+  return (
+    <Text style={styles.text} onPress={actualizaTexto}>
+      {contenido}
+    </Text>
+  );
+};
+
+/* Zona 2 : Componente principal */
 export default function App() {
   const [appReady, setAppReady] = useState(false);
 
-  // 2. Simulamos carga de recursos
   useEffect(() => {
     setTimeout(async () => {
       setAppReady(true);
       await SplashScreen.hideAsync();
-    }, 2000); // 2 segundos de splash
+    }, 2000); // Simulación de carga
   }, []);
 
-  // 3. Contenido principal con ImageBackground
   return (
-    <ImageBackground 
-      source={require('./assets/upq.jpg')} 
+    <ImageBackground
+      source={require('./assets/upq.jpg')} // Asegúrate de tener esta imagen
       style={styles.background}
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Mi App</Text>
-        <Text style={styles.subtitle}>
-          {appReady ? '¡Carga completa!' : 'Cargando...'}
-        </Text>
+        <Texto />
+        <Texto />
+        <Texto />
+        <StatusBar style="auto" />
       </View>
     </ImageBackground>
   );
 }
 
-// 4. Estilos simples
+/* Zona 3 : Estilos */
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -43,18 +56,17 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // overlay semitransparente
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column', // vertical
+    backgroundColor: 'rgba(0,0,0,0.4)', // overlay semitransparente
   },
-  title: {
+  text: {
     color: 'white',
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 28,
+    padding: 10,
+    margin: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 10,
   },
-  subtitle: {
-    color: 'white',
-    fontSize: 18,
-  }
 });
