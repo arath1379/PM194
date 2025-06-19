@@ -3,14 +3,22 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, Switch} from 'react-native';
 import React, { useState } from 'react';
 
-const Texto = ({style}) => {
-  const [contenido, setContenido] = useState('Hola Mundo RNative');
-  const actualizartexto = () => {setContenido('Estado actualizado del text')};
+const Interruptor = ()=>{
+  const [isEnable, setIsEnable] = useState(false);
+  const togleSwitch = ()=> setIsEnable(previousState => !previousState);
   return (
-    <View Style={{margin: 10}}>
-     <Text Style={[style.text, style]}>{contenido}</Text>
-     <Button title='actualizartexto' onPress={actualizartexto}color="orange" />
-     </View>
+    <View style={styles.container}>
+      <Text style={styles.text}>
+        {isEnable ? 'Activado' : 'Desactivado'}
+      </Text>
+      <Switch
+      trackColor={{ false: '#767577', true: '#81b0ff' }}
+      thumbColor={isEnable ? '#f5dd4b' : '#f4f3f4'}
+      onValueChange={togleSwitch}
+      value={isEnable}
+      />
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
@@ -18,9 +26,7 @@ const Texto = ({style}) => {
 export default function App() {
   return (
     <View style={styles.container}>
-      <Texto style={styles.red} />
-      <Texto style={styles.green} />
-      <Texto style={styles.yellow} />
+      <Interruptor />
       <StatusBar style="auto" />
     </View>
   );
@@ -30,7 +36,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#87CEEB',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
@@ -39,7 +45,4 @@ const styles = StyleSheet.create({
     color:'black',
     fontSize:27,
   },
-  red:{backgroundColor:'red'},
-  green:{backgroundColor:'green'},
-  yellow:{backgroundColor:'yellow'},
 });
