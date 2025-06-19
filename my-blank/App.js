@@ -1,72 +1,45 @@
 /* Zona 1 : Importaciones */
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
+import { Button, StyleSheet, Text, View, Switch} from 'react-native';
+import React, { useState } from 'react';
 
-// Prevenir que se oculte automáticamente el splash screen
-SplashScreen.preventAutoHideAsync();
-
-// Componente Texto
-const Texto = () => {
+const Texto = ({style}) => {
   const [contenido, setContenido] = useState('Hola Mundo RNative');
-  const actualizaTexto = () => {
-    setContenido('Estado actualizado del text');
-  };
+  const actualizartexto = () => {setContenido('Estado actualizado del text')};
   return (
-    <Text style={styles.text} onPress={actualizaTexto}>
-      {contenido}
-    </Text>
+    <View Style={{margin: 10}}>
+     <Text Style={[style.text, style]}>{contenido}</Text>
+     <Button title='actualizartexto' onPress={actualizartexto}color="orange" />
+     </View>
   );
-};
+}
 
-/* Zona 2 : Componente principal */
+/* Zona 2 : Main */
 export default function App() {
-  const [appReady, setAppReady] = useState(false);
-
-  useEffect(() => {
-    setTimeout(async () => {
-      setAppReady(true);
-      await SplashScreen.hideAsync();
-    }, 2000); // Simulación de carga
-  }, []);
-
   return (
-    <ImageBackground
-      source={require('./assets/upq.jpg')} // Asegúrate de tener esta imagen
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.container}>
-        <Texto />
-        <Texto />
-        <Texto />
-        <StatusBar style="auto" />
-      </View>
-    </ImageBackground>
+    <View style={styles.container}>
+      <Texto style={styles.red} />
+      <Texto style={styles.green} />
+      <Texto style={styles.yellow} />
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
 /* Zona 3 : Estilos */
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#87CEEB',
     alignItems: 'center',
-    flexDirection: 'column', // vertical
-    backgroundColor: 'rgba(0,0,0,0.4)', // overlay semitransparente
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
-  text: {
-    color: 'white',
-    fontSize: 28,
-    padding: 10,
-    margin: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 10,
+  text:{
+    color:'black',
+    fontSize:27,
   },
+  red:{backgroundColor:'red'},
+  green:{backgroundColor:'green'},
+  yellow:{backgroundColor:'yellow'},
 });
