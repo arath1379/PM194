@@ -1,45 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { ImageBackground } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 
-// 1. Configuramos el SplashScreen
-SplashScreen.preventAutoHideAsync();
+export default function App(){
 
-export default function App() {
-  const [appReady, setAppReady] = useState(false);
+return(
+  <ScrollView contentContainerStyle={styles.background} showsVerticalScrollIndicator={false} horizontal={true}>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text>
+  <Text>Hola Mundo</Text><Text>Hola Mundo</Text>
 
-  // 2. Simulamos carga de recursos
-  useEffect(() => {
-    setTimeout(async () => {
-      setAppReady(true);
-      await SplashScreen.hideAsync();
-    }, 2000); // 2 segundos de splash
-  }, []);
+  </ScrollView>
+)
 
-  // 3. Contenido principal con ImageBackground
-  return (
-    <ImageBackground 
-      source={require('./assets/upq.jpg')} 
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.container}>
-        <Text style={styles.title}>Mi App</Text>
-        <Text style={styles.subtitle}>
-          {appReady ? '¡Carga completa!' : 'Cargando...'}
-        </Text>
-      </View>
-    </ImageBackground>
-  );
 }
 
-// 4. Estilos simples
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
     width: '100%',
     height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   container: {
     flex: 1,
