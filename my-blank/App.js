@@ -1,64 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator, Button } from 'react-native';
 import { ImageBackground } from 'react-native';
 
 export default function App(){
+const [loading, setLoading] = useState(false);
+const [mensaje, setMensaje] = useState('');
 
+const simularCarga = () => {
+  setLoading(true);
+  setMensaje('');
+  setTimeout(() => {
+    setLoading(false);
+    setMensaje('Carga realizada con éxito');
+
+  }, 6000);
+}
 return(
-  <ScrollView contentContainerStyle={styles.background} showsVerticalScrollIndicator={false} horizontal={true}>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text>
-  <Text>Hola Mundo</Text><Text>Hola Mundo</Text>
-
-  </ScrollView>
+  <View style={styles.container}>
+    <Text style={styles.title}>
+      Carga
+    </Text>
+    {loading ?(
+      <>
+      <ActivityIndicator size={"large"} color={"#2D9CDB"} />
+      <Text style={styles.subtitle}>Cargando.....</Text>
+      </>
+    ):(
+      <>
+      <Button title="Iniciar carga" onPress={simularCarga} />
+      {mensaje !== '' && <Text style={styles.subtitle}>{mensaje}</Text>}
+      </>
+    )}
+  </View>
 )
 
 }
