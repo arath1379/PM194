@@ -1,108 +1,263 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Switch, ImageBackground, TextInput, Alert, ScrollView, Button} from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  SectionList,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Image,
+  StatusBar,
+} from 'react-native';
+import axios from 'axios';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-SplashScreen.preventAutoHideAsync();
+const CATEGORIAS = ['Ficción', 'Historia', 'Tecnología'];
 
-export default function App() {
-  const [nombre, setNombre] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [appLista, setAppLista] = useState([false]);
-  const [AcepTerminos, setAcepTerminos] = useState(false);
+function MainApp() {
+  const insets = useSafeAreaInsets();
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Ficción');
+  const [librosPorAutor, setLibrosPorAutor] = useState([]);
+  const [cargando, setCargando] = useState(false);
+  const [libroExpandidoId, setLibroExpandidoId] = useState(null);
 
-  const mostrarAlert = () => {
-    if (nombre === '' || correo === '') {
-      Alert.alert('Error', 'Por favor, rellene todos los campos.');
-      return;
+  const obtenerLibros = async (categoria) => {
+    try {
+      setCargando(true);
+      const response = await axios.get(
+        `https://www.googleapis.com/books/v1/volumes?q=subject:${categoria}&maxResults=30`
+      );
+
+      const items = response.data.items || [];
+      const agrupadosPorAutor = {};
+
+      items.forEach((item) => {
+        const autor = item.volumeInfo.authors?.[0] || 'Autor desconocido';
+        if (!agrupadosPorAutor[autor]) agrupadosPorAutor[autor] = [];
+        agrupadosPorAutor[autor].push(item);
+      });
+
+      const agrupados = Object.keys(agrupadosPorAutor).map((autor) => ({
+        title: autor,
+        data: agrupadosPorAutor[autor],
+      }));
+
+      setLibrosPorAutor(agrupados);
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo cargar la información de los libros.');
+    } finally {
+      setCargando(false);
     }
-    if (AcepTerminos === false) {
-      Alert.alert('Terminos y condiciones', 'Por favor, acepte los terminos y condiciones.');
-      return;
-    }
-    Alert.alert('¡Bienvenido!', `Hola ${nombre}! Tu correo es ${correo}`);
   };
 
   useEffect(() => {
-    setTimeout(async () => {
-      setAppLista(true);
-      await SplashScreen.hideAsync();
-    }, 1000);
-  },
-  []);
+    obtenerLibros(categoriaSeleccionada);
+  }, [categoriaSeleccionada]);
+
+  const renderLibro = ({ item }) => {
+    const { title, description, imageLinks, publisher, publishedDate, pageCount } = item.volumeInfo;
+    const imagen = imageLinks?.thumbnail;
+    const isExpanded = libroExpandidoId === item.id;
+
+    const descripcionCorta = description
+      ? `${description.substring(0, 120)}${description.length > 120 ? '...' : ''}`
+      : 'Descripción no disponible';
+
+    const descripcionCompleta = description || 'Descripción no disponible';
+
+    return (
+      <TouchableOpacity
+        style={estilos.libroContainer}
+        onPress={() =>
+          setLibroExpandidoId(isExpanded ? null : item.id)
+        }
+      >
+        {imagen && <Image source={{ uri: imagen }} style={estilos.libroImagen} />}
+        <View style={estilos.libroTexto}>
+          <Text style={estilos.libroTitulo}>{title}</Text>
+          <Text style={estilos.libroEditorial}>{publisher || 'Editorial no especificada'}</Text>
+          <Text style={estilos.libroDescripcion}>
+            {isExpanded ? descripcionCompleta : descripcionCorta}
+          </Text>
+
+          {isExpanded && (
+            <View style={{ marginTop: 8 }}>
+              <Text style={estilos.infoExtra}>Publicado: {publishedDate || 'N/D'}</Text>
+              <Text style={estilos.infoExtra}>Páginas: {pageCount || 'N/D'}</Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    
-    <ImageBackground source={require('./assets/background.jpg')} style={styles.background} resizeMode="cover">
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Registro de usuario</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre completo"
-        value={nombre}
-        onChangeText={setNombre}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Correo"
-        value={correo}
-        onChangeText={setCorreo}
-      />
-      <Switch
-        style={styles.switch}
-        value={AcepTerminos}
-        onValueChange={setAcepTerminos}
-      />
-      <Text style={styles.title}>Terminos y condiciones</Text>
-    <Button title="Registrarse" onPress={mostrarAlert} />
-    </ScrollView>
-    </ImageBackground>
+    <SafeAreaView style={[estilos.contenedor, { paddingTop: insets.top }]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      <View style={estilos.header}>
+        <Text style={estilos.tituloApp}>Explorador de Libros</Text>
+        <Text style={estilos.subtitulo}>Categoría: {categoriaSeleccionada}</Text>
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={estilos.categoriasContainer}>
+        {CATEGORIAS.map((cat) => (
+          <TouchableOpacity
+            key={cat}
+            style={[estilos.botonCategoria, categoriaSeleccionada === cat && estilos.botonActivo]}
+            onPress={() => setCategoriaSeleccionada(cat)}
+          >
+            <Text style={[estilos.textoCategoria, categoriaSeleccionada === cat && estilos.textoActivo]}>
+              {cat}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {cargando ? (
+        <View style={estilos.cargandoContainer}>
+          <ActivityIndicator size="large" color="#8A2BE2" />
+        </View>
+      ) : librosPorAutor.length === 0 ? (
+        <View style={estilos.sinLibrosContainer}>
+          <Text style={estilos.mensajeError}>No se encontraron libros</Text>
+        </View>
+      ) : (
+        <SectionList
+          sections={librosPorAutor}
+          keyExtractor={(item) => item.id}
+          renderItem={renderLibro}
+          renderSectionHeader={({ section: { title } }) => (
+            <View style={estilos.autorHeader}>
+              <Text style={estilos.autorNombre}>{title}</Text>
+            </View>
+          )}
+          contentContainerStyle={estilos.listaContenido}
+        />
+      )}
+    </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  background: {
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <MainApp />
+    </SafeAreaProvider>
+  );
+}
+
+const estilos = StyleSheet.create({
+  contenedor: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
   },
-  container: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+  header: {
+    marginBottom: 15,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 20,
-    resizeMode: 'contain',
-  },
-  title: {
+  tituloApp: {
     fontSize: 24,
-    marginBottom: 20,
-    color: 'white',
     fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
   },
-  input: {
-    width: '100%',
-    height: 45,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 15,
-  },
-  switchText: {
-    marginLeft: 10,
+  subtitulo: {
     fontSize: 16,
-    color: 'white',
+    color: '#666666',
   },
-  buttonContainer: {
-    marginTop: 20,
-    width: '100%',
+  categoriasContainer: {
+    marginBottom: 20,
+    height: 50,
+  },
+  botonCategoria: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#F0F0F0',
+  },
+  botonActivo: {
+    backgroundColor: '#8A2BE2',
+  },
+  textoCategoria: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#555555',
+  },
+  textoActivo: {
+    color: '#FFFFFF',
+  },
+  cargandoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sinLibrosContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mensajeError: {
+    fontSize: 16,
+    color: '#888888',
+  },
+  listaContenido: {
+    paddingBottom: 30,
+  },
+  autorHeader: {
+    backgroundColor: '#F5F5F5',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginTop: 15,
+    marginBottom: 5,
+    borderRadius: 4,
+  },
+  autorNombre: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  libroContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#EAEAEA',
+  },
+  libroImagen: {
+    width: 80,
+    height: 120,
+    borderRadius: 6,
+    marginRight: 12,
+  },
+  libroTexto: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  libroTitulo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222222',
+    marginBottom: 4,
+  },
+  libroEditorial: {
+    fontSize: 14,
+    color: '#777777',
+    fontStyle: 'italic',
+    marginBottom: 4,
+  },
+  libroDescripcion: {
+    fontSize: 14,
+    color: '#444444',
+    lineHeight: 20,
+  },
+  infoExtra: {
+    fontSize: 13,
+    color: '#666',
   },
 });
