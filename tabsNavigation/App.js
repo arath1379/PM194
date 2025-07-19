@@ -1,10 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import IonIcons from '@expo/vector-icons/Ionicons';
-
+import IonIcons from '@expo/vector-icons/Ionicons'; 
 import Home from './screens/home';
-import Profile from './screens/profile';
-import Settings from './screens/settings';
+import Settings from './screens/settings'; 
+import ProfileStack from './screens/ProfileStack'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +13,7 @@ export default function App() {
       <Tab.Navigator
         initialRouteName="Home"
         screenOptions={({ route }) => ({
-          headerShown: false,
+          headerShown: false, // Oculta el encabezado por defecto para las pestañas
           tabBarIcon: ({ color, size }) => {
             let iconName;
 
@@ -29,7 +28,7 @@ export default function App() {
             return <IonIcons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#007BFF',
-          tabBarInactiveTintColor: 'gray',
+          tabBarInactiveTintColor: 'gray', 
           tabBarStyle: {
             paddingBottom: 5,
             height: 60,
@@ -37,7 +36,8 @@ export default function App() {
         })}
       >
         <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Profile" component={Profile} />
+        {/* Aquí usamos el ProfileStack para la pestaña de Perfil */}
+        <Tab.Screen name="Profile" component={ProfileStack} />
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     </NavigationContainer>
